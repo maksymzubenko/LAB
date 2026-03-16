@@ -1,75 +1,148 @@
-<!doctype html>
-<html lang="uk">
-<head>
-    <meta charset="utf-8" />
-    <meta name ="viewport" content="width=device-width, initial-scale=1" />
-    <title> ЛР1 - Мій застосунок</title>
-    <link rel="stylesheet" href="styles.css" />
-    <script src="app.js" defer></script>
-</head>
-<body>
-    <div class="container">
-        <header>
-            <h1>Система пропусків у комп'ютерний клас</h1>
-        </header>
+const STORAGE_KEY = "passes";
 
-        <main class="layout">
-            <section>
-                <h2>Додати пропуск</h2>
-                <form id="createForm">
-                    <div class="field">
-                        <label for="userInput">Ім'я</label>
-                        <input id="userInput" type="text" />
-                        <p class="error-text" id="userError"></p>
-                    </div>
+let items = load();
+let nextId = computeNextId(items);
 
-                    <div class="field">
-                        <label for="reasonSelect">Статус</label>
-                        <select id="reasonSelect">
-                            <option value="">Вибір причини пропуску</option>
-                            <option value="Study">Студент</option>
-                            <option value="Exam">Іспит</option>
-                            <option value="Admin">Викладач</option>
-                        </select>
-                        <p class="error-text" id="reasonError"></p>
-                    </div>
+const form = document.getElementById("createForm");
+const tbody = document.getElementById("tableBody");
+const resetBtn = document.getElementById("resetBtn");
 
-                    <div class="field">
-                        <label for="dateInput">Дата входу</label>
-                        <input id="dateInput" type="date" />
-                        <p class="error-text" id="dateError"></p>
-                    </div>
+form.addEventListener("submit", function(e) {
+  e.preventDefault();
 
-                    <div class="field">
-                        <label for="commentInput">Примітка</label>
-                        <textarea id="commentInput" rows="3"></textarea>
-                        <p class="error-text" id="commentError"></p>
-                    </div>
+  const dto = readForm();
+  if (!validate(dto)) return;
 
-                    <div class="buttons">
-                        <button type="submit">Додати</button>
-                        <button type="button" id="resetBtn">Очистити</button>
-                    </div>
-                </form>
-            </section>
+  fetch("http://localhost:3000/api/passes", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(dto)
+  })
+  .then(res => res.json())
+  .then(data => {
+    console.log("Created:", data);
+    loadPasses();
 
-            <section>
-                <h2>Список пропусків</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Ім'я</th>
-                            <th>Статус</th>
-                            <th>Дата</th>
-                            <th>Примітка</th>
-                            <th>Дія</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tableBody"></tbody>
-                </table>
-            </section>
-        </main>
-    </div>
-</body>
-</html>
+    form.reset();
+    clearErrors();
+    loadPasses();
+  })
+  .catch(err => {
+    console.error(err);
+  });
+});
+
+resetBtn.addEventListener("click", function() {
+  form.reset();
+  clearErrors();
+});
+
+tbody.addEventListener("click", function(e) {
+  if (!e.target.dataset.id) return;
+
+  const id = e.target.dataset.id;
+
+  fetch(`http://localhost:3000/api/passes/${id}`, {
+    method: "DELETE"
+  })
+  .then(() => {
+    loadPasses();
+  });
+});
+
+function readForm() {
+  return {
+    user: document.getElementById("userInput").value.trim(),
+    reason: document.getElementById("reasonSelect").value,
+    date: document.getElementById("dateInput").value,
+    comment: document.getElementById("commentInput").value.trim()
+  };
+}
+
+function validate(d) {
+  clearErrors();
+  let ok = true;
+
+  if (d.user.length < 3) {
+    show("userInput","userError","Мінімум 3 символи");
+    ok = false;
+  }
+
+  if (d.reason === "") {
+    show("reasonSelect","reasonError","Виберіть статус");
+    ok = false;
+  }
+
+  if (d.date === "") {
+    show("dateInput","dateError","Виберіть дату");
+    ok = false;
+  }
+
+  if (d.comment.length < 5) {
+    show("commentInput","commentError","Мінімум 5 символів");
+    ok = false;
+  }
+
+  return ok;
+}
+
+function render() {
+  tbody.innerHTML = items.map(function(x,i){
+    return `
+      <tr>
+        <td>${i+1}</td>
+        <td>${x.user}</td>
+        <td>${x.reason}</td>
+        <td>${x.date}</td>
+        <td>${x.comment}</td>
+        <td><button data-id="${x.id}">Видалити</button></td>
+      </tr>
+    `;
+  }).join("");
+}
+
+function show(inputId,errorId,msg){
+  document.getElementById(inputId).classList.add("invalid");
+  document.getElementById(errorId).innerHTML = msg;
+}
+
+function clearErrors(){
+  document.getElementById("userInput").classList.remove("invalid");
+  document.getElementById("reasonSelect").classList.remove("invalid");
+  document.getElementById("dateInput").classList.remove("invalid");
+  document.getElementById("commentInput").classList.remove("invalid");
+
+  document.getElementById("userError").innerHTML="";
+  document.getElementById("reasonError").innerHTML="";
+  document.getElementById("dateError").innerHTML="";
+  document.getElementById("commentError").innerHTML="";
+}
+
+function save(){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+}
+
+function load(){
+  try{
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+  }catch{
+    return [];
+  }
+}
+
+function computeNextId(arr){
+  return arr.length ? Math.max(...arr.map(x => x.id)) + 1 : 1;
+}
+
+function loadPasses(){
+  fetch("http://localhost:3000/api/passes")
+  .then(res => res.json())
+  .then(data => {
+    items = data;
+    render();
+  });
+}
+
+loadPasses();

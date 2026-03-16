@@ -1,200 +1,70 @@
-const express = require("express");
+# Backend API для системи пропусків
 
-const app = express();
+Це backend частина лабораторної роботи №2.  
+API написано на Node.js з використанням Express.
 
-app.use(express.json());
+## Запуск
 
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Content-Type");
-  res.header("Access-Control-Allow-Methods", "GET,POST,DELETE");
-  next();
-});
+1. Встановити залежності
 
-let users = [];
-let nextUserId = 1;
+npm install
 
-app.use((req, res, next) => {
-  const start = Date.now();
+2. Запустити сервер
 
-  res.on("finish", () => {
-    const ms = Date.now() - start;
-    console.log(`${req.method} ${req.originalUrl} -> ${res.statusCode} (${ms}ms)`);
-  });
+npm run dev
 
-  next();
-});
+Після запуску сервер працює за адресою:
 
-app.get("/health", (req, res) => {
-  res.status(200).json({ ok: true });
-});
+http://localhost:3000
 
-app.get("/api/users", (req, res) => {
-  res.status(200).json(users);
-});
+---
 
-app.post("/api/users", (req, res) => {  
-  const { name, email } = req.body;  
-  
-  if (!name || name.length < 2) {  
-    return res.status(400).json({
-      error: "Name must be at least 2 characters"
-    });
-  }
+## Сутності
 
-  const user = {
-    id: nextUserId++,
-    name,
-    email
-  };
+### Users
+Користувачі системи.
 
-  users.push(user);
+Поля:
+- id
+- name
+- email
 
-  res.status(201).json(user);
-});
+### Passes
+Пропуски у комп'ютерний клас.
 
-app.get("/api/users/:id", (req, res) => {
-  const id = Number(req.params.id);
+Поля:
+- id
+- user
+- reason
+- date
+- comment
 
-  const user = users.find(u => u.id === id);
+---
 
-  if (!user) {
-    return res.status(404).json({
-      error: "User not found"
-    });
-  }
+## API
 
-  res.status(200).json(user);
-});
+Users:
 
-app.delete("/api/users/:id", (req, res) => {
-  const id = Number(req.params.id);
+GET /api/users  
+GET /api/users/:id  
+POST /api/users  
+PUT /api/users/:id  
+DELETE /api/users/:id  
 
-  const index = users.findIndex(u => u.id === id);
+Passes:
 
-  if (index === -1) {
-    return res.status(404).json({
-      error: "User not found"
-    });
-  }
+GET /api/passes  
+GET /api/passes/:id  
+POST /api/passes  
+PUT /api/passes/:id  
+DELETE /api/passes/:id  
 
-  users.splice(index, 1);
+---
 
-  res.status(204).send();
-});
+## Приклад запиту
 
-let passes = [];
-let nextPassId = 1;
+Створення пропуску:
 
-app.post("/api/passes", (req, res) => {
-
-  const { user, reason, date, comment } = req.body;
-
-  if (!user || user.length < 3) {
-    return res.status(400).json({
-      error: "User must be at least 3 characters"
-    });
-  }
-
-  const pass = {
-    id: nextPassId++,
-    user,
-    reason,
-    date,
-    comment
-  };
-
-  passes.push(pass);
-
-  res.status(201).json(pass);
-});
-
-app.put("/api/users/:id", (req, res) => {
-
-  const id = Number(req.params.id);
-  const user = users.find(u => u.id === id);
-
-  if (!user) {
-    return res.status(404).json({ error: "User not found" });
-  }
-
-  const { name, email } = req.body;
-
-  if (name) user.name = name;
-  if (email) user.email = email;
-
-  res.status(200).json(user);
-});
-
-app.get("/api/passes", (req, res) => {
-  res.status(200).json(passes);
-});
-
-app.get("/api/passes/:id", (req, res) => {
-
-  const id = Number(req.params.id);
-
-  const pass = passes.find(p => p.id === id);
-
-  if (!pass) {
-    return res.status(404).json({
-      error: "Pass not found"
-    });
-  }
-
-  res.status(200).json(pass);
-});
-
-app.put("/api/passes/:id", (req, res) => {
-
-  const id = Number(req.params.id);
-
-  const pass = passes.find(p => p.id === id);
-
-  if (!pass) {
-    return res.status(404).json({
-      error: "Pass not found"
-    });
-  }
-
-  const { user, reason, date, comment } = req.body;
-
-  if (user) pass.user = user;
-  if (reason) pass.reason = reason;
-  if (date) pass.date = date;
-  if (comment) pass.comment = comment;
-
-  res.status(200).json(pass);
-});
-
-app.delete("/api/passes/:id", (req, res) => {
-
-  const id = Number(req.params.id);
-
-  const index = passes.findIndex(p => p.id === id);
-
-  if (index === -1) {
-    return res.status(404).json({
-      error: "Pass not found"
-    });
-  }
-
-  passes.splice(index, 1);
-
-  res.status(204).send();
-});
-
-app.use((err, req, res, next) => {
-  console.error("Unhandled error:", err);
-
-  res.status(500).json({
-    error: {
-      code: "INTERNAL_ERROR",
-      message: "Internal server error"
-    }
-  });
-});
-
-app.listen(3000, () => {
-  console.log("Server started http://localhost:3000");
-});
+curl -X POST http://localhost:3000/api/passes \
+-H "Content-Type: application/json" \
+-d '{"user":"Ivan","reason":"Study","date":"2026-03-16","comment":"Test"}'

@@ -13,13 +13,25 @@ form.addEventListener("submit", function(e) {
   const dto = readForm();
   if (!validate(dto)) return;
 
-  items.push({ id: nextId++, ...dto });
+  fetch("http://localhost:3000/api/passes", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(dto)
+  })
+  .then(res => res.json())
+  .then(data => {
+    console.log("Created:", data);
+    loadPasses();
 
-  save();
-  render();
-
-  form.reset();
-  clearErrors();
+    form.reset();
+    clearErrors();
+    loadPasses();
+  })
+  .catch(err => {
+    console.error(err);
+  });
 });
 
 resetBtn.addEventListener("click", function() {
@@ -30,11 +42,14 @@ resetBtn.addEventListener("click", function() {
 tbody.addEventListener("click", function(e) {
   if (!e.target.dataset.id) return;
 
-  const id = Number(e.target.dataset.id);
-  items = items.filter(x => x.id !== id);
+  const id = e.target.dataset.id;
 
-  save();
-  render();
+  fetch(`http://localhost:3000/api/passes/${id}`, {
+    method: "DELETE"
+  })
+  .then(() => {
+    loadPasses();
+  });
 });
 
 function readForm() {
@@ -121,4 +136,13 @@ function computeNextId(arr){
   return arr.length ? Math.max(...arr.map(x => x.id)) + 1 : 1;
 }
 
-render();
+function loadPasses(){
+  fetch("http://localhost:3000/api/passes")
+  .then(res => res.json())
+  .then(data => {
+    items = data;
+    render();
+  });
+}
+
+loadPasses();

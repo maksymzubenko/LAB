@@ -26,9 +26,8 @@ http://localhost:3000
 
 **users**
 
-* id (PRIMARY KEY)
+* id 
 * name
-* email (UNIQUE)
 
 **passes**
 
@@ -113,14 +112,3 @@ curl http://localhost:3000/api/passes
 curl http://localhost:3000/api/passes/search?user=Ivan
 
 ---
-
-## Примітка (SQL Injection)
-
-У деяких запитах використовується конкатенація рядків для формування SQL (наприклад, у search).
-Це небезпечно, оскільки дозволяє виконати довільний SQL-код.
-
-Приклад небезпечного вводу:
-
-user=' OR 1=1 --
-
-У реальних застосунках це потрібно виправляти через параметризовані запити.

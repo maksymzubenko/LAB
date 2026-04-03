@@ -44,8 +44,6 @@ http://localhost:3000
 * action
 * createdAt
 
-Зв’язок:
-1 pass → багато записів у pass_logs (1:N)
 
 ---
 

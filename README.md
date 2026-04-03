@@ -1,4 +1,4 @@
-# Backend API для системи пропусків
+# Backend API для системи пропусків (SQLite)
 
 ## Запуск
 
@@ -10,58 +10,117 @@ npm install
 
 npm run dev
 
-Після запуску сервер працює за адресою:
-
+Сервер працює за адресою:
 http://localhost:3000
 
 ---
 
-## Сутності
+## База даних
 
-### Users
-Користувачі системи.
+Використовується SQLite.
+Файл бази даних створюється автоматично при першому запуску сервера (наприклад: data/app.db).
 
-Поля:
-- id
-- name
-- email
+Схема ініціалізується через файл schema.sql.
 
-### Passes
-Пропуски у комп'ютерний клас.
+### Таблиці:
 
-Поля:
-- id
-- user
-- reason
-- date
-- comment
+**users**
+
+* id (PRIMARY KEY)
+* name
+* email (UNIQUE)
+
+**passes**
+
+* id (PRIMARY KEY)
+* user
+* reason
+* date
+* comment
+
+**pass_logs**
+
+* id (PRIMARY KEY)
+* passId (FOREIGN KEY → passes.id)
+* action
+* createdAt
+
+Зв’язок:
+1 pass → багато записів у pass_logs (1:N)
 
 ---
 
 ## API
 
-Users:
+### Users
 
-GET /api/users  
-GET /api/users/:id  
-POST /api/users  
-PUT /api/users/:id  
-DELETE /api/users/:id  
-
-Passes:
-
-GET /api/passes  
-GET /api/passes/:id  
-POST /api/passes  
-PUT /api/passes/:id  
-DELETE /api/passes/:id  
+GET /api/users
+GET /api/users/:id
+POST /api/users
+PUT /api/users/:id
+DELETE /api/users/:id
 
 ---
 
-## Приклад запиту
+### Passes
+
+GET /api/passes
+GET /api/passes/:id
+POST /api/passes
+PUT /api/passes/:id
+DELETE /api/passes/:id
+
+---
+
+### Додаткові можливості
+
+Фільтрація і сортування:
+
+GET /api/passes?user=Max&sort=date&order=DESC
+
+Пошук (WHERE + ORDER + LIMIT):
+
+GET /api/passes/search?user=Max
+
+JOIN (passes + logs):
+
+GET /api/passes-with-logs
+
+Агрегація (COUNT):
+
+GET /api/passes/count
+
+Seed (тестові дані):
+
+GET /seed
+
+---
+
+## Приклади запитів
 
 Створення пропуску:
 
-curl -X POST http://localhost:3000/api/passes \
--H "Content-Type: application/json" \
+curl -X POST http://localhost:3000/api/passes 
+-H "Content-Type: application/json" 
 -d '{"user":"Ivan","reason":"Study","date":"2026-03-16","comment":"Test"}'
+
+Отримання списку:
+
+curl http://localhost:3000/api/passes
+
+Пошук:
+
+curl http://localhost:3000/api/passes/search?user=Ivan
+
+---
+
+## Примітка (SQL Injection)
+
+У деяких запитах використовується конкатенація рядків для формування SQL (наприклад, у search).
+Це небезпечно, оскільки дозволяє виконати довільний SQL-код.
+
+Приклад небезпечного вводу:
+
+user=' OR 1=1 --
+
+У реальних застосунках це потрібно виправляти через параметризовані запити.

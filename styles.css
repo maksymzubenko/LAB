@@ -30,6 +30,8 @@ section{
 .field label {
     font-display: block;
     margin-bottom: 5px;
+    font-weight: bold;
+    margin-left: 2px;
 }
 
 .field input,
@@ -58,16 +60,45 @@ section{
     gap: 8px;
 }
 
+
+
 table {
     width: 100%;
     border-collapse:collapse ;
+    border-radius: 10px;
+    overflow: hidden;
 }
 
 th, td {
     border: 1px solid #ccc;
     padding: 5px;
+    text-align: center;
 }
 
 th {
     background: #eee;
+    background: #4CAF50;
+    color: white;
+    padding: 8px;
+}
+
+button {
+    padding: 8px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button[type="submit"] {
+    background: rgb(0, 200, 0);
+    color: rgb(255, 255, 255);
+}
+
+#resetBtn {
+    background: rgb(250, 74, 74);
+    color: white;
+}
+
+h1, h2 {
+    text-align: center;
 }

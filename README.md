@@ -1,43 +1,36 @@
-Frontend + Backend API для системи пропусків (SQLite)
-Запуск
-Backend
-Перейти у папку backend
+# Frontend + Backend API для системи пропусків (SQLite)
 
+## Запуск
+
+### Backend
+
+1. Перейти у папку backend
+
+```bash
 cd backend
-
 Встановити залежності
-
 npm install
-
 Запустити сервер
-
 npm run dev
 
 Сервер працює за адресою:
-
 http://localhost:3000
 
 Frontend
 Перейти у папку frontend
-
 cd frontend
-
 Запустити локальний сервер
-
 npx http-server -p 5500
 
 Frontend працює за адресою:
-
 http://localhost:5500
 
 База даних
 
 Використовується SQLite.
-Файл бази даних створюється автоматично при запуску сервера.
+Файл бази даних створюється автоматично при першому запуску сервера (data/app.db).
 
-Схема ініціалізується через файл:
-
-schema.sql
+Схема ініціалізується через файл schema.sql.
 
 Таблиці:
 
@@ -62,7 +55,7 @@ passId (FOREIGN KEY → passes.id)
 action
 createdAt
 Архітектура Frontend
-Основні файли:
+Основні модулі:
 
 config.js
 
@@ -85,7 +78,8 @@ showNotice()
 
 main.js
 
-логіка інтеграції frontend + backend
+логіка роботи інтерфейсу
+інтеграція frontend + backend
 API
 Users
 
@@ -126,50 +120,50 @@ Seed (тестові дані):
 GET /seed
 
 Реалізовано у фронтенді
-fetch() інтеграція з API
+fetch() інтеграція з backend API
 loading / success / empty / error стани
-клієнтська валідація
+клієнтська валідація форми
+створення пропусків
+видалення пропусків
+автоматичне оновлення таблиці
 повідомлення про помилки
-створення записів
-видалення записів
-підтвердження видалення
-блокування повторної відправки форми
-CORS сумісність
-API versioning (/api/v1)
+API_BASE_URL конфігурація
+CORS інтеграція
+версійність API (/api/v1)
 Приклади запитів
 Створення пропуску:
-
-curl -X POST http://localhost:3000/api/v1/passes
-
--H "Content-Type: application/json"
+curl -X POST http://localhost:3000/api/v1/passes \
+-H "Content-Type: application/json" \
 -d '{"user":"Ivan","reason":"Study","date":"2026-03-16","comment":"Test"}'
-
 Отримання списку:
-
 curl http://localhost:3000/api/v1/passes
-
 Отримання одного запису:
-
 curl http://localhost:3000/api/v1/passes/1
-
 Видалення:
-
 curl -X DELETE http://localhost:3000/api/v1/passes/1
-
 Пошук:
-
 curl http://localhost:3000/api/passes/search?user=Ivan
-
 Сценарії перевірки
 Успішні:
 Завантаження списку
-Створення пропуску
+Створення нового пропуску
 Видалення пропуску
-Фільтрація
-JOIN / COUNT
+Пошук користувача
+JOIN та COUNT endpoints
 Неуспішні:
-Порожні поля
+Порожні поля форми
 Некоректні дані
 Backend вимкнений
-404 / 400 / 500
+404 помилки
+400 помилки
 CORS помилки
+Версійність API
+
+Основний формат маршрутів:
+
+/api/v1/
+Правила сумісності DTO:
+існуючі поля не перейменовуються
+існуючі поля не видаляються
+нові поля додаються як необов’язкові
+breaking changes можливі лише через нову версію API

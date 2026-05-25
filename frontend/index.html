@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8" />
+    <meta name ="viewport" content="width=device-width, initial-scale=1" />
+    <title> ЛР1 - Мій застосунок</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script type="module" src="./src/main.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Система пропусків у комп'ютерний клас</h1>
+        </header>
+
+        <div id="notice"></div>
+        <div id="status"></div>
+
+        <main class="layout">
+            <section>
+                <h2>Додати пропуск</h2>
+                <form id="createForm">
+                    <div class="field">
+                        <label for="userInput">Ім'я</label>
+                        <input id="userInput" type="text" />
+                        <p class="error-text" id="userError"></p>
+                    </div>
+
+                    <div class="field">
+                        <label for="reasonSelect">Статус</label>
+                        <select id="reasonSelect">
+                            <option value="">Вибір причини пропуску</option>
+                            <option value="Study">Студент</option>
+                            <option value="Exam">Іспит</option>
+                            <option value="Admin">Викладач</option>
+                        </select>
+                        <p class="error-text" id="reasonError"></p>
+                    </div>
+
+                    <div class="field">
+                        <label for="dateInput">Дата входу</label>
+                        <input id="dateInput" type="date" />
+                        <p class="error-text" id="dateError"></p>
+                    </div>
+
+                    <div class="field">
+                        <label for="commentInput">Примітка</label>
+                        <textarea id="commentInput" rows="3"></textarea>
+                        <p class="error-text" id="commentError"></p>
+                    </div>
+
+                    <div class="buttons">
+                        <button type="submit">Додати</button>
+                        <button type="button" id="resetBtn">Очистити</button>
+                    </div>
+                </form>
+            </section>
+
+            <section>
+                <h2>Список пропусків</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Ім'я</th>
+                            <th>Статус</th>
+                            <th>Дата</th>
+                            <th>Примітка</th>
+                            <th>Дія</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

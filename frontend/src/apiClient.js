@@ -57,7 +57,27 @@ export function deletePass(id){
   });
 
 }
+export function getHealth() {
+  return fetch("http://localhost:3000/health")
+    .then(r => r.json());
+}
 
 export function getPassesCount() {
   return request("/passes/count");
 }
+
+export function getPassesWithLogs() {
+  return request("/passes-with-logs");
+}
+
+export function searchPasses(user) {
+  return fetch(
+    `http://localhost:3000/api/passes/search?user=${user}`
+  ).then(r => r.json());
+}
+
+export function seedData() {
+  return fetch("http://localhost:3000/seed")
+    .then(r => r.json());
+}
+

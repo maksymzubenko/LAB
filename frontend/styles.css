@@ -102,3 +102,63 @@ button[type="submit"] {
 h1, h2 {
     text-align: center;
 }
+
+.api-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.api-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.api-buttons button {
+    padding: 10px 14px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    background: #4caf50;
+    color: white;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+.api-buttons button:hover {
+    transform: translateY(-2px);
+    opacity: 0.9;
+}
+
+#apiOutput {
+    margin-top: 15px;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background: #fafafa;
+    min-height: 120px;
+    max-height: 350px;
+    overflow: auto;
+    font-size: 13px;
+}
+
+.api-search {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.api-search input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+.api-btn.active {
+    background: #2e7d32;
+    color: white;
+    transform: scale(1.03);
+    box-shadow: 0 0 8px rgba(0,0,0,.2);
+}

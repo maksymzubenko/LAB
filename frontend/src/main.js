@@ -1,4 +1,9 @@
-import { getPasses, createPass, deletePass } from "./apiClient.js";
+import {
+  getPasses,
+  createPass,
+  deletePass,
+  getPassesCount
+} from "./apiClient.js";
 import { API_BASE_URL } from "./config.js";
 import {
   readForm,
@@ -39,6 +44,7 @@ form.addEventListener("submit", async function(e) {
     showNotice("Пропуск створено");
 
     await loadPasses();
+    await loadCount();
   } catch (err) {
     console.error(err);
     showNotice("Помилка створення пропуску");
@@ -63,6 +69,7 @@ tbody.addEventListener("click", async function(e) {
     await deletePass(id);
     showNotice("Пропуск видалено");
     await loadPasses();
+    await loadCount();
   } catch (err) {
     console.error(err);
     showNotice("Помилка видалення");
@@ -91,4 +98,24 @@ async function loadPasses() {
   }
 }
 
+async function loadCount() {
+
+  try {
+
+    const data = await getPassesCount();
+
+    console.log(data);
+
+    document.getElementById("passesCount").textContent =
+      `Всього пропусків: ${data.total}`;
+
+  } catch (err) {
+
+    console.error(err);
+
+  }
+
+}
+
 loadPasses();
+loadCount();

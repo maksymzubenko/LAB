@@ -57,3 +57,7 @@ export function deletePass(id){
   });
 
 }
+
+export function getPassesCount() {
+  return request("/passes/count");
+}

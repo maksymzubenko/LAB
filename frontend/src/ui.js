@@ -11,10 +11,18 @@ export function validate(d) {
   clearErrors();
   let ok = true;
 
-  if (d.user.length < 3) {
-    show("userInput", "userError", "Мінімум 3 символи");
-    ok = false;
-  }
+if (d.user.length < 3) {
+  show("userInput", "userError", "Мінімум 3 символи");
+  ok = false;
+}
+else if (!/^[А-Яа-яІіЇїЄєA-Za-z\s]+$/.test(d.user)) {
+  show(
+    "userInput",
+    "userError",
+    "Ім'я повинно містити тільки літери"
+  );
+  ok = false;
+}
 
   if (d.reason === "") {
     show("reasonSelect", "reasonError", "Виберіть статус");

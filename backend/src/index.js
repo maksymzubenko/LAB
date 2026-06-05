@@ -265,6 +265,32 @@ app.get("/api/v1/passes/count", (req, res) => {
   });
 });
 
+app.get("/api/v1/passes/top-users", (req, res) => {
+
+  const sql = `
+    SELECT
+      user,
+      COUNT(*) AS total
+    FROM passes
+    GROUP BY user
+    ORDER BY total DESC
+    LIMIT 3
+  `;
+
+  db.all(sql, (err, rows) => {
+
+    if (err) {
+      return res.status(500).json({
+        error: err.message
+      });
+    }
+
+    res.json(rows);
+
+  });
+
+});
+
 app.get("/api/v1/passes/:id", demoAuth, (req, res) => {
 
   const sql = `
@@ -273,6 +299,11 @@ app.get("/api/v1/passes/:id", demoAuth, (req, res) => {
     WHERE id=?
     AND ownerUserId=?
   `;
+
+  console.log(
+  "req.params.id =",
+  req.params.id
+);
 
   db.get(
     sql,

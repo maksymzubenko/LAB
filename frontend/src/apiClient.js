@@ -81,3 +81,51 @@ export function seedData() {
     .then(r => r.json());
 }
 
+export function getPassById(id) {
+
+  console.log("Запитую ID:", id);
+
+  return request(`/passes/${id}`, {
+    headers: {
+      "X-Demo-UserId": "1"
+    }
+  });
+
+} 
+
+export function updatePass(id) {
+  return request(`/passes/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Demo-UserId": "1"
+    },
+    body: JSON.stringify({
+      user: "Максим",
+      reason: "Study",
+      date: "2026-06-01",
+      comment: "Оновлено"
+    })
+  });
+}
+
+export function createUser() {
+  return request("/users", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      name: "TestUser",
+      email: "test@test.com"
+    })
+  });
+}
+
+export function getUser(id) {
+  return request(`/users/${id}`);
+}
+
+export function getTopUsers() {
+  return request("/passes/top-users");
+}

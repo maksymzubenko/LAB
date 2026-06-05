@@ -6,7 +6,12 @@ import {
   getHealth,
   getPassesWithLogs,
   searchPasses,
-  seedData
+  seedData,
+  getPassById,
+  updatePass,
+  createUser,
+  getUser,
+  getTopUsers
 } from "./apiClient.js";
 
 import { API_BASE_URL } from "./config.js";
@@ -216,6 +221,164 @@ document
 
     apiOutput.textContent =
       "Тестові дані успішно додані";
+
+});
+
+document
+  .getElementById("passByIdBtn")
+  .addEventListener("click", async () => {
+
+    setActiveButton("passByIdBtn");
+
+    const id =
+  document.getElementById("passIdInput").value;
+
+if (!id) {
+  apiOutput.textContent =
+    "Введіть ID пропуску";
+  return;
+}
+
+const data = await getPassById(id);
+
+apiOutput.innerHTML = `
+<div class="api-card">
+
+<h3>Пропуск</h3>
+
+<p><b>ID:</b> ${data.id}</p>
+<p><b>Ім'я:</b> ${data.user}</p>
+<p><b>Статус:</b> ${data.reason}</p>
+<p><b>Дата:</b> ${data.date}</p>
+<p><b>Примітка:</b> ${data.comment}</p>
+
+</div>
+`;
+
+    apiOutput.innerHTML = `
+      <div class="api-card">
+        <b>ID:</b> ${data.id}<br>
+        <b>Ім'я:</b> ${data.user}<br>
+        <b>Статус:</b> ${data.reason}<br>
+        <b>Дата:</b> ${data.date}<br>
+        <b>Примітка:</b> ${data.comment}
+      </div>
+    `;
+
+});
+
+document
+  .getElementById("updatePassBtn")
+  .addEventListener("click", async () => {
+
+    setActiveButton("updatePassBtn");
+
+    const id =
+  document.getElementById("passIdInput").value;
+
+if (!id) {
+  apiOutput.textContent =
+    "Введіть ID пропуску";
+  return;
+}
+
+await updatePass(id);
+
+apiOutput.innerHTML = `
+<div class="api-card success">
+Пропуск №${id} успішно оновлено
+</div>
+`;
+
+await loadPasses();
+
+    apiOutput.textContent =
+      "Пропуск №1 успішно оновлено";
+
+    await loadPasses();
+
+});
+
+document
+  .getElementById("createUserBtn")
+  .addEventListener("click", async () => {
+
+    setActiveButton("createUserBtn");
+
+    const data = await createUser();
+
+    apiOutput.innerHTML = `
+<div class="api-card success">
+
+<h3>Користувача створено</h3>
+
+<p><b>ID:</b> ${data.id}</p>
+<p><b>Ім'я:</b> ${data.name}</p>
+<p><b>Email:</b> ${data.email}</p>
+
+</div>
+`;
+
+});
+
+document
+  .getElementById("getUserBtn")
+  .addEventListener("click", async () => {
+
+    setActiveButton("getUserBtn");
+
+    const id =
+  document.getElementById("userIdInput").value;
+
+if (!id) {
+  apiOutput.textContent =
+    "Введіть ID користувача";
+  return;
+}
+
+const data = await getUser(id);
+
+apiOutput.innerHTML = `
+<div class="api-card">
+<h3>Користувач</h3>
+
+<p><b>ID:</b> ${data.id}</p>
+<p><b>Ім'я:</b> ${data.name}</p>
+<p><b>Email:</b> ${data.email}</p>
+
+</div>
+`;
+
+    apiOutput.innerHTML = `
+      <div class="api-card">
+        <b>ID:</b> ${data.id}<br>
+        <b>Ім'я:</b> ${data.name}<br>
+        <b>Email:</b> ${data.email}
+      </div>
+    `;
+
+});
+
+document
+  .getElementById("topUsersBtn")
+  .addEventListener("click", async () => {
+
+    setActiveButton("topUsersBtn");
+
+    const data = await getTopUsers();
+
+    apiOutput.innerHTML = `
+      <div class="api-card">
+
+        ${data.map((item, index) => `
+          <div class="top-user">
+            <b>${index + 1} місце</b>
+            Ім'я: ${item.user}
+            Пропусків: ${item.total}
+          </div>
+        `).join("")}
+      </div>
+    `;
 
 });
 

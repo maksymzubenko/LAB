@@ -81,16 +81,16 @@
     <h2>Сервісні функції</h2>
 
     <div class="api-search">
-    <input
-        id="searchInput"
-        type="text"
-        placeholder="Введіть ім'я користувача"
-    >
+        <input
+            id="searchInput"
+            type="text"
+            placeholder="Введіть ім'я користувача"
+        >
 
-    <button id="searchBtn" class="api-btn">
-        Пошук пропусків
-    </button>
-</div>
+        <button id="searchBtn" class="api-btn">
+            Пошук пропусків
+        </button>
+    </div>
 
     <div class="api-buttons">
 
@@ -110,7 +110,49 @@
             Додати тестові дані
         </button>
 
+        <button id="topUsersBtn" class="api-btn">
+    ТОП-3 користувачів
+</button>
+
     </div>
+
+</section>
+
+<section class="api-panel">
+
+    <h2>Користувачі та пропуски</h2>
+
+    <h3>Користувачі</h3>
+
+    <input
+        id="userIdInput"
+        type="number"
+        placeholder="ID користувача"
+    >
+
+    <button id="createUserBtn" class="api-btn">
+        Створити користувача
+    </button>
+
+    <button id="getUserBtn" class="api-btn">
+        Отримати користувача
+    </button>
+
+    <h3>Пропуски</h3>
+
+    <input
+        id="passIdInput"
+        type="number"
+        placeholder="ID пропуску"
+    >
+
+    <button id="passByIdBtn" class="api-btn">
+        Отримати пропуск
+    </button>
+
+    <button id="updatePassBtn" class="api-btn">
+        Оновити пропуск
+    </button>
 
     <pre id="apiOutput"></pre>
 
